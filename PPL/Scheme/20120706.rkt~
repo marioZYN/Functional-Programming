@@ -1,0 +1,42 @@
+#lang racket
+
+
+(define (make-iter lst)
+  (let ((l lst))
+    (lambda ()
+      (if (null? l)
+          '<<end>>
+           (let ((cur (car l)))
+             (set! l (cdr l))
+             cur)))))
+
+(define il (make-iter '(1 2)))
+
+(define (make-iter-vec vec)
+  (let ((vs  vec)
+        (counter 0))
+    (lambda()
+      (if (>= counter (vector-length vs))
+          '<<end>>
+          (begin
+            (set! counter (+ 1 counter))
+            (vector-ref vs (- counter 1)))))))
+
+(define jl (make-iter-vec #(1 2 3)))
+
+(define (iter-for block iter)
+  (let loop((cur (iter)))
+    (when (not (eq? cur '<<end>>))
+      (block cur)
+      (loop (iter)))))
+     
+(define (iter-dispatch data)
+  (cond
+    [(list? data) (make-iter data)]
+    [(vector? data) (make-iter-vec data)]))
+
+(define-syntax for
+  (syntax-rules(in)
+    ((_ var in data expr ...)
+     (iter-for (lambda(var) expr ...) (iter-dispatch data)))))
+            
