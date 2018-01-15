@@ -1,3 +1,3 @@
 # Functional-Programming
 
-This repo contains self practice with some funcitonal programming languages.
+This repo contains self practices with some funcitonal programming languages.
